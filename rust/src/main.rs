@@ -3,6 +3,9 @@
 #![feature(box_patterns)]
 #![feature(if_let_guard)]
 
+#[macro_use]
+mod helpers;
+
 mod day01;
 mod day02;
 mod day03;

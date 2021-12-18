@@ -60,19 +60,15 @@ impl SnailfishNumber {
     std::iter::successors(Some(self), Self::reduce_step).last().unwrap()
   }
 
-  fn magnitude(self) -> u32 {
+  fn add(&self, rhs: &Self) -> Self {
+    Pair((self.to_owned(), rhs.to_owned()).into()).reduce()
+  }
+
+  fn magnitude(&self) -> u32 {
     match self.to_owned() {
       Pair(box (a, b)) => 3 * a.magnitude() + 2 * b.magnitude(),
       Single(n) => n as u32
     }
-  }
-}
-
-impl std::ops::Add for SnailfishNumber {
-  type Output = Self;
-
-  fn add(self, rhs: Self) -> Self::Output {
-    Pair((self, rhs).into()).reduce()
   }
 }
 
@@ -84,12 +80,17 @@ pub fn solve() {
     .collect::<Option<Vec<_>>>()
     .unwrap();
 
-  let sum = numbers.into_iter()
-    .reduce(|a, b| a + b)
-    .unwrap();
+  let part1 = numbers.iter()
+    .cloned()
+    .reduce(|a, b| a.add(&b))
+    .unwrap()
+    .magnitude();
 
-  let part1 = sum.magnitude();
-  let part2 = 0; // todo
+  let part2 = combinations!(numbers a b)
+    .flat_map(|(a, b)| [a.add(b), b.add(a)])
+    .map(|n| n.magnitude())
+    .max()
+    .unwrap();
 
   println!("day18: {} {}", part1, part2);
 }
