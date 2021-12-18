@@ -13,23 +13,23 @@ impl SnailfishNumber {
         let a = Self::parse(input)?; input.next()?;
         let b = Self::parse(input)?; input.next()?;
         Some(Pair((a, b).into()))
-      },
+      }
       n => Some(Single(n as u8 - b'0'))
     }
   }
 
   fn split(&self) -> Option<Self> {
-    match self.to_owned() {
-      Single(n) if n > 9 => Some(Pair((Single(n / 2), Single((n + 1) / 2)).into())),
-      Pair(box (a, b)) if let Some(a) = a.split() => Some(Pair((a, b).into())),
-      Pair(box (a, b)) if let Some(b) = b.split() => Some(Pair((a, b).into())),
+    match self {
+      Single(n) if *n > 9 => Some(Pair((Single(n / 2), Single((n + 1) / 2)).into())),
+      Pair(box (a, b)) if let Some(a) = a.split() => Some(Pair((a, b.to_owned()).into())),
+      Pair(box (a, b)) if let Some(b) = b.split() => Some(Pair((a.to_owned(), b).into())),
       _ => None
     }
   }
 
-  fn explode(&self, d: usize, f: &dyn Fn(u8, u8, SnailfishNumber) -> SnailfishNumber) -> Option<Self> {
-    match self.to_owned() {
-      Pair(box (Single(a), Single(b))) if d > 3 => Some(f(a, b, Single(0))),
+  fn explode(&self, d: usize, f: &dyn Fn(u8, u8, Self) -> Self) -> Option<Self> {
+    match self {
+      Pair(box (Single(a), Single(b))) if d > 3 => Some(f(a.to_owned(), b.to_owned(), Single(0))),
       Pair(box (a, b)) if let Some(a) = a
         .explode(d + 1, &|x, y, a| f(x, 0, Pair((a, b.add_left(y)).into()))) => Some(a),
       Pair(box (a, b)) if let Some(b) = b
@@ -39,36 +39,33 @@ impl SnailfishNumber {
   }
 
   fn add_left(&self, n: u8) -> Self {
-    match self.to_owned() {
-      Pair(box (a, b)) => Pair((a.add_left(n), b).into()),
+    match self {
+      Pair(box (a, b)) => Pair((a.add_left(n), b.to_owned()).into()),
       Single(m) => Single(n + m)
     }
   }
 
   fn add_right(&self, n: u8) -> Self {
-    match self.to_owned() {
-      Pair(box (a, b)) => Pair((a, b.add_right(n)).into()),
+    match self {
+      Pair(box (a, b)) => Pair((a.to_owned(), b.add_right(n)).into()),
       Single(m) => Single(n + m)
     }
   }
 
-  fn reduce_step(&self) -> Option<Self> {
-    self.explode(0, &|_, _, n| n).or_else(|| self.split())
+  fn magnitude(&self) -> u32 {
+    match self {
+      Pair(box (a, b)) => 3 * a.magnitude() + 2 * b.magnitude(),
+      Single(n) => *n as u32
+    }
   }
 
-  fn reduce(self) -> Self {
-    std::iter::successors(Some(self), Self::reduce_step).last().unwrap()
+  fn reduce(&self) -> Self {
+    let step = |n: &Self| n.explode(0, &|_, _, n| n).or_else(|| n.split());
+    std::iter::successors(Some(self.to_owned()), step).last().unwrap()
   }
 
   fn add(&self, rhs: &Self) -> Self {
     Pair((self.to_owned(), rhs.to_owned()).into()).reduce()
-  }
-
-  fn magnitude(&self) -> u32 {
-    match self.to_owned() {
-      Pair(box (a, b)) => 3 * a.magnitude() + 2 * b.magnitude(),
-      Single(n) => n as u32
-    }
   }
 }
 
