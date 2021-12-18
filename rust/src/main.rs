@@ -1,5 +1,7 @@
 #![deny(rust_2018_idioms)]
 #![feature(array_windows)]
+#![feature(box_patterns)]
+#![feature(if_let_guard)]
 
 mod day01;
 mod day02;
@@ -9,6 +11,7 @@ mod day05;
 mod day06;
 mod day10;
 mod day15;
+mod day18;
 
 fn main() {
   day01::solve();
@@ -19,4 +22,5 @@ fn main() {
   day06::solve();
   day10::solve();
   day15::solve();
+  day18::solve();
 }
