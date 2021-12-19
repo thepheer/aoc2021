@@ -15,6 +15,7 @@ pub fn main() !void {
   try @import("day08/solve.zig").solve(mem);
   try @import("day09/solve.zig").solve(mem);
   try @import("day11/solve.zig").solve(mem);
+  try @import("day12/solve.zig").solve(mem);
   try @import("day13/solve.zig").solve(mem);
   try @import("day16/solve.zig").solve(mem);
 }

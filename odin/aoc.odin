@@ -7,12 +7,14 @@ import "day09"
 import "day13"
 import "day14"
 import "day17"
+import "day19"
 
 solve_all :: proc() -> (ok: bool) {
   day09.solve() or_return
   day13.solve() or_return
   day14.solve() or_return
   day17.solve() or_return
+  day19.solve() or_return
   return true
 }
 

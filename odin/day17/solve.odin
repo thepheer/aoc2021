@@ -8,8 +8,8 @@ import "core:strings"
 Vector :: [2]int
 Point :: [2]int
 Entity :: struct { pos: Point, vel: Vector }
-Range :: struct { min: int, max: int }
-Area :: struct { x: Range, y: Range }
+Range :: struct { min, max: int }
+Area :: struct { x, y: Range }
 
 parse_area :: proc(input: string) -> (area: Area, ok: bool) {
   trimmed := strings.trim_space(input)
