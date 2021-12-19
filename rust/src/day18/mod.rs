@@ -1,3 +1,8 @@
+// This solution would not be possible without major assistance from TrueBoxGuy,
+// you can find his Haskell solution right next to this file.
+// There's no way I could figure out the explode function by myself.
+// Had to enable two nightly Rust features for it to work.
+
 use SnailfishNumber::*;
 
 #[derive(Clone)]
