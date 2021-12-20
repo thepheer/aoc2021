@@ -50,8 +50,8 @@ const BitSet2D = struct {
   }
 
   fn init(mem: std.mem.Allocator, size: Vec2, fill: bool) !BitSet2D {
-    const BitSet_init = if (fill) BitSet.initEmpty else BitSet.initEmpty;
-    const bits = try BitSet_init(mem, @intCast(usize, size.x) * @intCast(usize, size.y));
+    const len = @intCast(usize, size.x) * @intCast(usize, size.y);
+    const bits = try BitSet.initEmpty(mem, len);
     return BitSet2D{ .bits = bits, .size = size, .fill = fill };
   }
 
@@ -102,7 +102,7 @@ const TrenchMap = struct {
     self.grid.deinit();
   }
 
-  fn step(self: *TrenchMap) !void {
+  fn enhance(self: *TrenchMap) !void {
     var next = try self.grid.next(vec2(2, 2));
     defer next.deinit();
 
@@ -124,9 +124,9 @@ const TrenchMap = struct {
     std.mem.swap(BitSet2D, &self.grid, &next);
   }
 
-  fn makeNStepsAndCountLit(self: *TrenchMap, n: usize) !usize {
+  fn enhanceNTimesAndCountLit(self: *TrenchMap, n: usize) !usize {
     var i: usize = 0;
-    while (i < n) : (i += 1) try self.step();
+    while (i < n) : (i += 1) try self.enhance();
     return self.grid.bits.count();
   }
 };
@@ -139,8 +139,8 @@ pub fn solve(mem: std.mem.Allocator) !void {
   var map = try TrenchMap.parse(mem, trimmed);
   defer map.deinit();
 
-  const part1 = try map.makeNStepsAndCountLit(2);
-  const part2 = try map.makeNStepsAndCountLit(50 - 2);
+  const part1 = try map.enhanceNTimesAndCountLit(2);
+  const part2 = try map.enhanceNTimesAndCountLit(50 - 2);
 
   std.debug.print("day20: {} {}\n", .{ part1, part2 });
 }
