@@ -3,7 +3,7 @@ package day19
 import "core:strconv"
 import "core:strings"
 
-Scanner :: struct { points: []Point }
+Scanner :: struct { points: []Point, heuristics: []Heuristic }
 
 parse_scanner :: proc(input: string) -> (scanner: Scanner, ok: bool) {
   lines := strings.split(input, "\n")
@@ -21,11 +21,13 @@ parse_scanner :: proc(input: string) -> (scanner: Scanner, ok: bool) {
     }
   }
 
+  scanner.heuristics = compute_heuristics(scanner.points)
   return scanner, true
 }
 
 destroy_scanner :: proc(scanner: Scanner) {
   delete(scanner.points)
+  delete(scanner.heuristics)
 }
 
 parse_scanners :: proc(input: string) -> (scanners: []Scanner, ok: bool) {
