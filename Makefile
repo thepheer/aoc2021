@@ -3,9 +3,9 @@ time := time -f "%E real, %U user, %S sys, %P cpu, %Mk mem"
 c++_flags := -std=c++20
 crystal_flags :=
 nim_flags := --hints:off
-odin_flags := -strict-style # -vet
+odin_flags := -strict-style
 rust_flags := -q
-zig_flags := -fsingle-threaded # -lc
+zig_flags := -fsingle-threaded
 
 ifdef RELEASE
 	rust_path := release
@@ -17,7 +17,7 @@ ifdef RELEASE
 	zig_flags += --strip -O ReleaseFast
 else
 	rust_path := debug
-	odin_flags += -debug
+	odin_flags += -debug -vet
 endif
 
 .PHONY: all c++ nim odin rust zig julia

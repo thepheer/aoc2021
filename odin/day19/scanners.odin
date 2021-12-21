@@ -11,7 +11,7 @@ parse_scanner :: proc(input: string) -> (scanner: Scanner, ok: bool) {
   defer delete(lines)
 
   scanner.points = make([]Point, len(lines_no_header))
-  defer if !ok do destroy_scanner(scanner)
+  defer if !ok do delete_scanner(scanner)
 
   for line, p in &lines_no_header {
     for xyz in 0..2 {
@@ -25,9 +25,9 @@ parse_scanner :: proc(input: string) -> (scanner: Scanner, ok: bool) {
   return scanner, true
 }
 
-destroy_scanner :: proc(scanner: Scanner) {
-  delete(scanner.points)
-  delete(scanner.heuristics)
+delete_scanner :: proc(self: Scanner) {
+  delete(self.points)
+  delete(self.heuristics)
 }
 
 parse_scanners :: proc(input: string) -> (scanners: []Scanner, ok: bool) {
@@ -36,7 +36,7 @@ parse_scanners :: proc(input: string) -> (scanners: []Scanner, ok: bool) {
   defer delete(parts)
 
   scanners = make([]Scanner, len(parts))
-  defer if !ok do destroy_scanners(scanners)
+  defer if !ok do delete_scanners(scanners)
 
   for part, i in parts {
     scanners[i] = parse_scanner(part) or_return
@@ -45,9 +45,7 @@ parse_scanners :: proc(input: string) -> (scanners: []Scanner, ok: bool) {
   return scanners, true
 }
 
-destroy_scanners :: proc(scanners: []Scanner) {
-  for scanner in scanners {
-    destroy_scanner(scanner)
-  }
+delete_scanners :: proc(scanners: []Scanner) {
+  for scanner in scanners do delete_scanner(scanner)
   delete(scanners)
 }
