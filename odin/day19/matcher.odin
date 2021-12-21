@@ -3,7 +3,7 @@ package day19
 import "core:mem"
 import "core:slice"
 
-MATCH_THRESHOLD :: 1
+MATCH_THRESHOLD :: 3
 
 Matcher :: struct {
   known_scanners: [dynamic]Point,
@@ -71,11 +71,11 @@ match_points :: proc(known: []Point, unknown: []Point) -> (Rotation, Translation
   for rotation in ROTATIONS {
     count := 0
     for k in 0..<len(known) {
+      translation1 := known[k] - rotation * unknown[k]
       for u in k + 1..<len(unknown) {
-        translation1 := known[k] - rotation * unknown[k]
         translation2 := known[u] - rotation * unknown[u]
         count += int(mem.simple_equal(translation1, translation2))
-        if count > MATCH_THRESHOLD {
+        if count >= MATCH_THRESHOLD {
           return rotation, translation1, true
         }
       }
