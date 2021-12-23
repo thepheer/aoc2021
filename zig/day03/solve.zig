@@ -49,8 +49,7 @@ fn findByCriterion(mem: std.mem.Allocator, nums: []Bits, by_most_common: bool) !
     const bit = most_common ^ @boolToInt(by_most_common);
 
     var index = state.items.len;
-    while (index > 0) {
-      index -= 1;
+    while (!@subWithOverflow(usize, index, 1, &index)) {
       if (bitAt(state.items[index], bit_index) != bit)
         _ = state.swapRemove(index);
     }

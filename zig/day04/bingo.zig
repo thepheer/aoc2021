@@ -65,8 +65,7 @@ fn findWinner(self: Self) ?Board {
 
 fn eliminateWinners(self: *Self) void {
   var index = self.boards.items.len;
-  while (index > 0) {
-    index -= 1;
+  while (!@subWithOverflow(usize, index, 1, &index)) {
     if (self.boards.items[index].bingo())
       _ = self.boards.swapRemove(index);
   }

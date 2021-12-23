@@ -3,66 +3,56 @@ const util = @import("../util.zig");
 
 const Position = std.math.IntFittingRange(1, 10);
 
-const DeterministicDice = struct {
-  state: u8 = 1,
+fn GameState(comptime Score: type) type {
+  return struct {
+    positions: [2]Position,
+    scores: [2]Score = .{ 0, 0 },
+    player: u1 = 0,
 
-  fn throw(self: *DeterministicDice) u8 {
+    fn next(self: GameState(Score), steps: u10) GameState(Score) {
+      var next_state = self;
+      var player = &next_state.player;
+      var position = &next_state.positions[player.*];
+      var score = &next_state.scores[player.*];
+      position.* = @intCast(Position, (position.* + steps - 1) % 10 + 1);
+      score.* += position.*;
+      player.* = player.* +% 1;
+      return next_state;
+    }
+  };
+}
+
+const DeterministicDice = struct {
+  state: u10 = 1,
+
+  fn throw(self: *DeterministicDice) u10 {
     const saved = self.state;
     self.state = self.state % 100 + 1;
     return saved;
   }
 
-  fn playUntilSomeoneWins(starting_positions: [2]Position) u64 {
+  fn playUntilSomeoneWins(positions: [2]Position) u64 {
     var die = DeterministicDice{};
-    var positions = starting_positions;
-    var scores = [_]u16{ 0, 0 };
-    var player: u1 = 0;
+    var state = GameState(u10){ .positions = positions };
     var throws: u32 = 0;
-
-    while (@maximum(scores[0], scores[1]) < 1000) : (throws += 3) {
-      var position = &positions[player];
-      var score = &scores[player];
-
-      const steps = @as(u16, die.throw()) + die.throw() + die.throw();
-      position.* = @intCast(Position, (position.* + steps - 1) % 10 + 1);
-      score.* += position.*;
-      player = player +% 1;
+    while (std.math.max(state.scores[0], state.scores[1]) < 1000) : (throws += 3) {
+      state = state.next(die.throw() + die.throw() + die.throw());
     }
-
-    return throws * scores[player];
+    return throws * state.scores[state.player];
   }
 };
 
 const DiracDice = struct {
   const Wins = [2]u64;
   const Score = std.math.IntFittingRange(0, 21);
-  const Cache = std.AutoHashMap(GameState, Wins);
-
-  const GameState = struct {
-    positions: [2]Position,
-    scores: [2]Score = .{ 0, 0 },
-    player: u1 = 0,
-
-    fn next(self: GameState, steps: u8) GameState {
-      var next_state = self;
-      var player = &next_state.player;
-      var position = &next_state.positions[player.*];
-      var score = &next_state.scores[player.*];
-
-      position.* = @intCast(Position, (position.* + steps - 1) % 10 + 1);
-      score.* += position.*;
-      player.* = player.* +% 1;
-
-      return next_state;
-    }
-  };
+  const Cache = std.AutoHashMap(GameState(Score), Wins);
 
   fn addWins(acc: *Wins, wins: Wins, multiplier: usize) void {
     acc[0] += wins[0] * multiplier;
     acc[1] += wins[1] * multiplier;
   }
 
-  fn dp(cache: *Cache, state: GameState) anyerror!Wins {
+  fn dp(cache: *Cache, state: GameState(Score)) anyerror!Wins {
     if (cache.get(state)) |wins| return wins;
     if (state.scores[0] >= 21) return Wins{ 1, 0 };
     if (state.scores[1] >= 21) return Wins{ 0, 1 };
@@ -80,12 +70,12 @@ const DiracDice = struct {
     return acc;
   }
 
-  fn countWinningUniverses(mem: std.mem.Allocator, starting_positions: [2]Position) !u64 {
+  fn countWinningUniverses(mem: std.mem.Allocator, positions: [2]Position) !u64 {
     var cache = Cache.init(mem);
     defer cache.deinit();
 
-    const wins = try dp(&cache, .{ .positions = starting_positions });
-    return @maximum(wins[0], wins[1]);
+    const wins = try dp(&cache, .{ .positions = positions });
+    return std.math.max(wins[0], wins[1]);
   }
 };
 

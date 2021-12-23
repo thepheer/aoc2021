@@ -14,7 +14,7 @@ ifdef RELEASE
 	nim_flags += -d:danger
 	odin_flags += -no-bounds-check -opt:3
 	rust_flags += --release
-	zig_flags += --strip -O ReleaseFast
+	zig_flags += --strip -O ReleaseFast -lc
 else
 	rust_path := debug
 	odin_flags += -debug -vet
