@@ -1,17 +1,19 @@
 package aoc.day03
 
-val BITS = 12
-val MASK = (1 shl BITS) - 1
+import aoc.extensions.*
+
+const val BITS = 12
+const val MASK = (1 shl BITS) - 1
 
 fun Int.bitAt(index: Int) =
   shr (BITS - index - 1) and 1 == 1
 
 fun Iterable<Int>.mostCommonBit(bitIndex: Int) =
-  2 * filter { it.bitAt(bitIndex) }.count() >= count()
+  2 * count { it.bitAt(bitIndex) } >= count()
 
 fun Iterable<Int>.gammaEpsilon(): Pair<Int, Int> {
   val gamma = (0 until BITS)
-    .map { bitIndex -> mostCommonBit(bitIndex).compareTo(false) }
+    .map { bitIndex -> mostCommonBit(bitIndex).toInt() }
     .fold(0) { bits, bit -> bits shl 1 or bit }
   return Pair(gamma, gamma xor MASK)
 }

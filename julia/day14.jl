@@ -51,6 +51,6 @@ module day14
     answer₁ = M^10 * pair_index_counts |> count_elements |> most_least_common_diff
     answer₂ = M^40 * pair_index_counts |> count_elements |> most_least_common_diff
 
-    println("day07: $answer₁ $answer₂")
+    println("day14: $answer₁ $answer₂")
   end
 end
