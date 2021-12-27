@@ -19,10 +19,7 @@
           "message": 4
         }
       },
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
+      "group": "build"
     },
     {
       "label": "zig",
@@ -45,6 +42,18 @@
         }
       },
       "group": "build"
+    },
+    {
+      "label": "kotlin",
+      "command": "make",
+      "args": [
+        "kotlin"
+      ],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     }
   ]
 }

@@ -20,8 +20,8 @@ else
 	odin_flags += -debug -vet
 endif
 
-.PHONY: all c++ nim odin rust zig julia
-all: c++ nim odin rust zig julia
+.PHONY: all c++ kotlin nim odin rust zig julia
+all: c++ kotlin nim odin rust zig julia
 
 c++:
 	$(info ─── $@ ───)
@@ -36,6 +36,11 @@ nim:
 	$(info ─── $@ ───)
 	@cd $@ && nim c $(nim_flags) aoc
 	@$(time) ./$@/aoc
+
+kotlin:
+	$(info ─── $@ ───)
+	@cd $@ && kotlinc -include-runtime -jvm-target 17 -d aoc.jar *.kt
+	@$(time) java -jar ./$@/aoc.jar
 
 odin:
 	$(info ─── $@ ───)
