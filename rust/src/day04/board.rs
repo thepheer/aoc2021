@@ -1,3 +1,6 @@
+#![allow(clippy::precedence)]
+#![allow(clippy::unusual_byte_groupings)]
+
 pub const N: usize = 5;
 
 const ROW_MASK: u32 = 0b_00000_00000_00000_00000_11111;
@@ -38,13 +41,10 @@ impl Board {
   }
 
   pub fn bingo(&self) -> bool {
-    for i in 0..N {
-      let row = ROW_MASK << i * N;
-      let col = COL_MASK << i;
-      if self.marked & row == row || self.marked & col == col {
-        return true;
-      }
-    }
-    false
+    (0..N).any(|shift| {
+      let row = ROW_MASK << shift * N;
+      let col = COL_MASK << shift;
+      self.marked & row == row || self.marked & col == col
+    })
   }
 }

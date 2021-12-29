@@ -1,3 +1,5 @@
+#![allow(clippy::self_named_constructors)]
+
 enum Score {
   Invalid(u64),
   Incomplete(u64)

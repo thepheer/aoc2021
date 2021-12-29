@@ -50,6 +50,15 @@
         "kotlin"
       ],
       "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "d",
+      "command": "make",
+      "args": [
+        "d"
+      ],
+      "problemMatcher": [],
       "group": {
         "kind": "build",
         "isDefault": true

@@ -88,7 +88,7 @@ impl<T> Grid<T> {
   pub fn in_bounds(&self, at: Vec2) -> bool {
     let x = 0 <= at.x && at.x < self.size.x;
     let y = 0 <= at.y && at.y < self.size.y;
-    return x && y;
+    x && y
   }
 }
 
@@ -96,7 +96,7 @@ impl<T> Index<Vec2> for Grid<T> {
   type Output = T;
 
   fn index(&self, at: Vec2) -> &Self::Output {
-    return &self.grid[(self.size.x * at.y + at.x) as usize];
+    &self.grid[(self.size.x * at.y + at.x) as usize]
   }
 }
 

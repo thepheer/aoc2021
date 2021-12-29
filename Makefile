@@ -1,6 +1,7 @@
 time := time -f "%E real, %U user, %S sys, %P cpu, %Mk mem"
 
 c++_flags := -std=c++20
+d_flags := -q
 crystal_flags :=
 nim_flags := --hints:off
 odin_flags := -strict-style
@@ -10,6 +11,7 @@ zig_flags := -fsingle-threaded
 ifdef RELEASE
 	rust_path := release
 	c++_flags += -O3
+	d_flags += -b=release-nobounds
 	crystal_flags += --release
 	nim_flags += -d:danger
 	odin_flags += -no-bounds-check -opt:3
@@ -20,12 +22,17 @@ else
 	odin_flags += -debug -vet
 endif
 
-.PHONY: all c++ kotlin nim odin rust zig julia
-all: c++ kotlin nim odin rust zig julia
+.PHONY: all c++ d kotlin nim odin rust zig julia
+all: c++ d kotlin nim odin rust zig julia
 
 c++:
 	$(info ─── $@ ───)
 	@cd $@ && g++-11 $(c++_flags) -o aoc aoc.cpp util.cpp
+	@$(time) ./$@/aoc
+
+d:
+	$(info ─── $@ ───)
+	@cd $@ && dub build $(d_flags)
 	@$(time) ./$@/aoc
 
 julia:

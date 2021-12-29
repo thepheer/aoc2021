@@ -24,7 +24,8 @@ fun Iterable<Int>.findByCriterion(byMostCommon: Boolean): Int {
     val mostCommon = nums.mostCommonBit(bitIndex)
     val bit = mostCommon xor byMostCommon
     nums.retainAll { it.bitAt(bitIndex) == bit }
-    if (nums.count() == 1) return nums[0]
+    if (nums.count() == 1)
+      return nums.first()
   }
   throw Exception()
 }

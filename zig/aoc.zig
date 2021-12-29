@@ -30,3 +30,7 @@ pub fn main() !void {
     try solveAll(std.heap.c_allocator);
   }
 }
+
+test {
+  std.testing.refAllDecls(@This());
+}
