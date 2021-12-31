@@ -1,49 +1,49 @@
-package aoc.day02
+package aoc
 
-sealed class Move {
-  class Down(val n: Int) : Move()
-  class Forward(val n: Int) : Move()
+private sealed class Move {
+  class Down(val steps: Int) : Move()
+  class Forward(val steps: Int) : Move()
 }
 
-fun String.toMove(): Move {
+private fun String.toMove(): Move {
   val (lhs, rhs) = split(' ')
   val num = rhs.toInt()
   return when (lhs) {
     "up" -> Move.Down(-num)
     "down" -> Move.Down(num)
     "forward" -> Move.Forward(num)
-    else -> throw Exception()
+    else -> unreachable()
   }
 }
 
-class Submarine {
+private class Submarine {
   var hPos = 0
   var depth = 0
   var aim = 0
 
   fun part1(moves: Iterable<Move>): Int {
     for (move in moves) when (move) {
-      is Move.Down -> depth += move.n
-      is Move.Forward -> hPos += move.n
+      is Move.Down -> depth += move.steps
+      is Move.Forward -> hPos += move.steps
     }
     return hPos * depth
   }
 
   fun part2(moves: Iterable<Move>): Int {
     for (move in moves) when (move) {
-      is Move.Down -> aim += move.n
+      is Move.Down -> aim += move.steps
       is Move.Forward -> {
-        hPos += move.n
-        depth += move.n * aim
+        hPos += move.steps
+        depth += move.steps * aim
       }
     }
     return hPos * depth
   }
 }
 
-fun solve() {
+fun day02() {
   val input = java.io.File(".input", "day02")
-  val moves = input.readLines().map { it.toMove() }.toList()
+  val moves = input.useLines { it.map(String::toMove).toList() }
   val part1 = Submarine().part1(moves)
   val part2 = Submarine().part2(moves)
   println("day02: $part1 $part2")

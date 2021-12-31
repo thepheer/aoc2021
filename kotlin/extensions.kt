@@ -1,4 +1,6 @@
-package aoc.extensions
+package aoc
+
+fun unreachable(): Nothing = throw IllegalStateException()
 
 fun Boolean.toInt() = compareTo(false)
 

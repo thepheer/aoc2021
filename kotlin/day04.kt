@@ -1,12 +1,10 @@
-package aoc.day04
+package aoc
 
-import aoc.extensions.*
+private const val N = 5
+private const val ROW_MASK = 0b00000_00000_00000_00000_11111
+private const val COL_MASK = 0b00001_00001_00001_00001_00001
 
-const val N = 5
-const val ROW_MASK = 0b00000_00000_00000_00000_11111
-const val COL_MASK = 0b00001_00001_00001_00001_00001
-
-class Board(val matrix: List<Byte>, var marked: Int = 0) {
+private class Board(val matrix: List<Byte>, var marked: Int = 0) {
   fun mark(num: Byte) {
     val shift = matrix.indexOfOrNull(num) ?: return
     marked = 1 shl shift or marked
@@ -18,12 +16,12 @@ class Board(val matrix: List<Byte>, var marked: Int = 0) {
     marked and row == row || marked and col == col
   }
 
-  fun sumAllUnmarked() = matrix
+  fun sumAllUnmarked() = matrix.asSequence()
     .filterIndexed { shift, _ -> 1 shl shift and marked == 0 }
     .sum()
 }
 
-class Bingo(val nums: MutableList<Byte>, val boards: MutableList<Board>) {
+private class Bingo(val nums: MutableList<Byte>, val boards: MutableList<Board>) {
   fun markInAllBoards(num: Byte) = boards.forEach { it.mark(num) }
 
   fun part1(): Int {
@@ -33,7 +31,7 @@ class Bingo(val nums: MutableList<Byte>, val boards: MutableList<Board>) {
         return drawn * it.sumAllUnmarked()
       }
     }
-    throw Exception()
+    unreachable()
   }
 
   fun part2(): Int {
@@ -46,24 +44,24 @@ class Bingo(val nums: MutableList<Byte>, val boards: MutableList<Board>) {
         else -> boards.removeAll { it.hasBingo() }
       }
     }
-    throw Exception()
+    unreachable()
   }
 }
 
-fun String.toBoard(): Board {
+private fun String.toBoard(): Board {
   val nums = splitToSequence(' ', '\n').filter { it.isNotEmpty() }.map { it.toByte() }
   return Board(nums.toList())
 }
 
-fun String.toBingo(): Bingo {
-  val parts = splitToSequence("\n\n")
+private fun String.toBingo(): Bingo {
+  val parts = trim().splitToSequence("\n\n")
   val nums = parts.first().splitToSequence(',').map { it.toByte() }.toMutableList()
   val boards = parts.drop(1).map { it.toBoard() }.toMutableList()
   return Bingo(nums.asReversed(), boards)
 }
 
-fun solve() {
-  val input = java.io.File(".input", "day04").readText().trim()
+fun day04() {
+  val input = java.io.File(".input", "day04").readText()
   val bingo = input.toBingo()
   val part1 = bingo.part1()
   val part2 = bingo.part2()
