@@ -1,9 +1,9 @@
-package aoc
+package aoc.day01
 
-private fun <T : Comparable<T>> Sequence<T>.countIncreasing() =
+internal fun <T : Comparable<T>> Sequence<T>.countIncreasing() =
   zipWithNext().count { it.first < it.second }
 
-fun day01() {
+fun solve() {
   val input = java.io.File(".input", "day01")
   val depth = input.useLines { it.map(String::toInt).toList().asSequence() }
   val part1 = depth.countIncreasing()
